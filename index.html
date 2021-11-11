@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>HuBMAP CCF Registrations</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/tabulator-tables/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/tabulator-tables/dist/js/tabulator.min.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div id="visualization" style="width: 920px"></div>
+    <div style="text-align: right; width: 920px; margin: 5px;">
+      <button onclick="setApiKey()">(Optional) Set API Key</button>
+      <button onclick="downloadTable()">Download Table as CSV</button>
+    </div>
+    <div id="table" style="width: 920px; height: 600px;"></div>
+  </body>
+</html>
