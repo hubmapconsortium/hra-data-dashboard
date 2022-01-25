@@ -107,7 +107,7 @@ function downloadTable() {
 }
 
 function main() {
-  let searchUri = 'https://hubmap-link-api.herokuapp.com/hubmap-datasets?format=jsonld';
+  let searchUri = 'https://ccf-api.hubmapconsortium.org/v1/hubmap/rui_locations.jsonld';
   if (localStorage.getItem('HUBMAP_KEY')) {
     searchUri = `${searchUri}&token=${localStorage.getItem('HUBMAP_KEY')}`;
   }
