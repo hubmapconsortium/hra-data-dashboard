@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.21.0/dist/cytoscape.umd.js"></script>
+    <script src="data.js"></script>
+  </head>
+  <body>
+    <div id="cy" style="width: calc(100vw - 20px); height: calc(100vh - 20px); float: right;"></div>
+    <select id="rootNode" style="position: fixed; top: 5px; left: 5px;">
+      <option value="root">All</option>
+    </select>
+    <button onclick="setApiKey()" style="position: fixed; top: 5px; right: 5px;">Set API Key</button>
+    <script src="dashboard1.js"></script>
+  </body>
+</html>
