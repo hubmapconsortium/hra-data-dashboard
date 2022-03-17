@@ -182,9 +182,6 @@ function setApiKey() {
 
 async function main() {
   const token = localStorage.getItem('HUBMAP_KEY') || undefined;
-  if (!token) {
-    setApiKey();
-  }
   let samples = [];
   if (sessionStorage.getItem('x')) {
     samples = JSON.parse(sessionStorage.getItem('x'));
