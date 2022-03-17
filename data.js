@@ -35,10 +35,49 @@ function getSamples(token, from, size) {
   .then(r => r.hits.hits.map(n => Object.assign(n._source)));
 }
 
+function getVanderbiltSamples(token, organ, from, size) {
+  return fetch('https://search.api.hubmapconsortium.org/portal/search', {
+    method: 'POST',
+    headers: token ?
+      { 'Content-type': 'application/json', 'Authorization': `Bearer ${token}` } : 
+      { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      version: true,
+      from,
+      size,
+      stored_fields: ['*'],
+      script_fields: {},
+      docvalue_fields: [],
+      query: {
+        bool: {
+          must: {
+            term: { 'group_name.keyword': 'Vanderbilt TMC' }
+          },
+          must_not: {
+            term: { 'origin_sample.organ.keyword': organ }
+          },
+          filter: {
+            term: { 'entity_type.keyword': 'Sample' }
+          }
+        }
+      },
+      _source: {
+        includes: [
+          'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+        ]
+      }
+    })
+  }).then(r => r.json())
+  .then(r => { console.log(r.hits.total.value, r.hits.hits.map(n => n._source)); return r })
+  .then(r => r.hits.hits.map(n => Object.assign(n._source)));
+}
+
 async function getAllEntities(token) {
   return [
     ...await getSamples(token, 0, 10000),
-    // ...await getEntities(token, 400, 9000)
+    ...await getVanderbiltSamples(token, 'LK', 0, 10000),
+    ...await getVanderbiltSamples(token, 'RK', 0, 5000),
+    ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
   ];
 }
 

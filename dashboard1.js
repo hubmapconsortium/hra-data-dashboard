@@ -177,6 +177,7 @@ function setApiKey() {
   if (apiKey.trim().length > 0) {
     localStorage.setItem('HUBMAP_KEY', apiKey);
   }
+  localStorage.removeItem('x');
   location.reload();
 }
 
@@ -187,7 +188,11 @@ async function main() {
     samples = JSON.parse(sessionStorage.getItem('x'));
   } else {
     samples = await getAllEntities(token);  
-    sessionStorage.setItem('x', JSON.stringify(samples));
+    try {
+      sessionStorage.setItem('x', JSON.stringify(samples));
+    } catch (e) {
+      console.log('Result set too large to cache.');
+    }
   }
   const graph = createEntityGraph(samples);
   console.log(graph);
