@@ -9,6 +9,16 @@ function setApiKey() {
   location.reload();
 }
 
+function invalidKey() {
+  if (localStorage.getItem('HUBMAP_KEY') !== null) {
+    localStorage.removeItem('HUBMAP_KEY');
+    alert('An invalid/stale key was found. Clearing key and refreshing the page');
+    location.reload();
+  } else {
+    throw new Error('Something went wrong with the API request!');
+  }
+}
+
 function resultsAsDatasets(results) {
   const data = results['@graph'];
   const items = { };
@@ -97,14 +107,14 @@ function downloadTable() {
 }
 
 function main() {
-  let searchUri = 'https://hubmap-link-api.herokuapp.com/hubmap-datasets?format=jsonld';
+  let searchUri = 'https://ccf-api.hubmapconsortium.org/v1/hubmap/rui_locations.jsonld';
   if (localStorage.getItem('HUBMAP_KEY')) {
-    searchUri = `${searchUri}&token=${localStorage.getItem('HUBMAP_KEY')}`;
+    searchUri = `${searchUri}?token=${localStorage.getItem('HUBMAP_KEY')}`;
   }
 
   Promise.all([
     fetch("vis.vl.json").then((result) => result.json()),
-    fetch(searchUri).then((result) => result.json())
+    fetch(searchUri).then((result) => result.ok ? result.json() : invalidKey())
   ]).then(([spec, jsonData]) => {
     // Embed the graph data in the spec for ease of use from Vega Editor
     spec.datasets = resultsAsDatasets(jsonData);
