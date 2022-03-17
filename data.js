@@ -91,7 +91,7 @@ function createEntityGraph(samples) {
     }
     if (ancestor.uuid) {
       if (!nodes[ancestor.uuid]) {
-        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: hasAncestorRuiLocation ? 'Registered Block' : 'Unknown', entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor };
+        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: hasAncestorRuiLocation ? 'Registered Block' : 'Unknown', entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor } };
       }
 
       edges.push({
