@@ -1,6 +1,6 @@
 async function buildVega(graph) {
   const spec = await fetch("vis.vl.json").then((result) => result.json());
-  spec.datasets.nodes = graph.nodes;
+  spec.datasets.nodes = graph.nodes.map(n => n.data);
   return await vegaEmbed("#visualization", spec, { "renderer": "canvas", "actions": true });
 }
 

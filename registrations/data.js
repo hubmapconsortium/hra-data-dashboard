@@ -137,5 +137,24 @@ function createEntityGraph(samples) {
   }
 
   const nodesArray = Object.values(nodes);
+  nodesArray.forEach(n => {
+    switch (n.data.status) {
+    case 'Registered Block':
+      n.data.status_color = '#1a9641';
+      break;
+    case 'Registered Section':
+      n.data.status_color = '#a6d96a';
+      break;
+    case 'Unknown':
+      n.data.status_color = '#ffffbf';
+      break;
+    case 'Unregistered Block':
+      n.data.status_color = '#d7191c';
+      break;
+    case 'Unregistered Section':
+      n.data.status_color = '#fdae61';
+      break;
+    }
+  });
   return { nodes: nodesArray, edges };
 }

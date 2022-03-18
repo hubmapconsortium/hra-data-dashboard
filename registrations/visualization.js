@@ -66,33 +66,9 @@ function buildCyGraph(graph) {
         }
       },
       {
-        selector: `node[status = 'Registered Block']`,
+        selector: `node[status_color]`,
         style: {
-          'background-color': '#1a9641'
-        }
-      },
-      {
-        selector: `node[status = 'Registered Section']`,
-        style: {
-          'background-color': '#a6d96a'
-        }
-      },
-      {
-        selector: `node[status = 'Unknown']`,
-        style: {
-          'background-color': '#ffffbf'
-        }
-      },
-      {
-        selector: `node[status = 'Unregistered Block']`,
-        style: {
-          'background-color': '#d7191c'
-        }
-      },
-      {
-        selector: `node[status = 'Unregistered Section']`,
-        style: {
-          'background-color': '#fdae61'
+          'background-color': 'data(status_color)'
         }
       },
       {

@@ -1,21 +1,64 @@
 {
-  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
   "description": "Report for HuBMAP CCF Registrations",
   "autosize": {"type": "fit", "resize": true},
-  "width": "container",
-  "height": "container",
   "data": {
     "name": "nodes"
   },
   "transform": [
-    { "filter": "isValid(datum.data.provider)" }
+    { "filter": "isValid(datum.provider) && datum.status != 'N/A'" }
   ],
-  "mark": "bar",
-  "encoding": {
-    "x": { "aggregate": "count", "field": "data.status", "title": "Sample Count" },
-    "y": { "field": "data.provider", "title": "Provider" },
-    "color": { "field": "data.status", "title": "RUI Registration Status" }
-  },
+  "vconcat": [
+    {
+      "title": "Sample Registrations (Raw Counts)",
+      "height": {"step": 40},
+      "width": 480,      
+      "mark": "bar",
+      "transform": [ {"filter": "datum.provider != 'Vanderbilt TMC'"} ],
+      "encoding": {
+        "x": { "aggregate": "count", "field": "status", "title": null },
+        "y": { "field": "provider", "title": null },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "tooltip": [
+          { "field": "provider", "title": "Tissue Provider" },
+          { "field": "status", "title": "Status" },
+          { "aggregate": "count", "field": "status", "title": "Sample Count" }
+        ]
+      }
+    },
+    {
+      "height": {"step": 40},
+      "width": 480,      
+      "mark": "bar",
+      "transform": [ {"filter": "datum.provider == 'Vanderbilt TMC'"} ],
+      "encoding": {
+        "x": { "aggregate": "count", "field": "status", "title": "Sample Count" },
+        "y": { "field": "provider", "title": null },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "tooltip": [
+          { "field": "provider", "title": "Tissue Provider" },
+          { "field": "status", "title": "Status" },
+          { "aggregate": "count", "field": "status", "title": "Sample Count" }
+        ]
+      }
+    },
+    {
+      "title": "Sample Registrations (Normalized to percentage)",
+      "height": {"step": 40},
+      "width": 480,      
+      "mark": "bar",
+      "encoding": {
+        "x": { "aggregate": "count", "field": "status", "title": "Sample Count", "stack": "normalize" },
+        "y": { "field": "provider", "title": null },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "tooltip": [
+          { "field": "provider", "title": "Tissue Provider" },
+          { "field": "status", "title": "Status" },
+          { "aggregate": "count", "field": "status", "title": "Sample Count" }
+        ]
+      }
+    }
+  ],
   "datasets": {
     "nodes": []
   }

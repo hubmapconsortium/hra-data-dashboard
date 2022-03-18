@@ -4,7 +4,7 @@ function setApiKey() {
   if (apiKey.trim().length > 0) {
     localStorage.setItem('HUBMAP_KEY', apiKey);
   }
-  localStorage.removeItem('x');
+  sessionStorage.removeItem('x');
   location.reload();
 }
 
