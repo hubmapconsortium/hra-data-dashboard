@@ -6,7 +6,7 @@
     "name": "nodes"
   },
   "transform": [
-    { "filter": "isValid(datum.provider) && datum.status != 'N/A'" }
+    { "filter": "isValid(datum.provider) && isValid(datum.status_color)" }
   ],
   "vconcat": [
     {
@@ -18,7 +18,10 @@
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": null },
         "y": { "field": "provider", "title": null },
-        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {
+          "domain": ["Registered Block", "Registered Section", "Unknown", "Unregistered Block", "Unregistered Section"],
+          "range": ["#1a9641", "#a6d96a", "#000000", "#d7191c", "#fdae61"]
+        } },
         "tooltip": [
           { "field": "provider", "title": "Tissue Provider" },
           { "field": "status", "title": "Status" },
@@ -34,7 +37,7 @@
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": "Sample Count" },
         "y": { "field": "provider", "title": null },
-        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status" },
         "tooltip": [
           { "field": "provider", "title": "Tissue Provider" },
           { "field": "status", "title": "Status" },
@@ -50,7 +53,7 @@
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": "Sample Count", "stack": "normalize" },
         "y": { "field": "provider", "title": null },
-        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {"range": {"field": "status_color"}} },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status" },
         "tooltip": [
           { "field": "provider", "title": "Tissue Provider" },
           { "field": "status", "title": "Status" },

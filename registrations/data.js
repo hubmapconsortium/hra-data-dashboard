@@ -146,7 +146,7 @@ function createEntityGraph(samples) {
       n.data.status_color = '#a6d96a';
       break;
     case 'Unknown':
-      n.data.status_color = '#ffffbf';
+      n.data.status_color = '#000000';
       break;
     case 'Unregistered Block':
       n.data.status_color = '#d7191c';
