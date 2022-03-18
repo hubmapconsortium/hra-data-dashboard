@@ -16,9 +16,6 @@ function getSamples(token, from, size) {
           must_not: {
             term: { 'group_name.keyword': 'Vanderbilt TMC' }
           },
-          // must: {
-          //   term: { 'group_name.keyword': 'University of Florida TMC' }
-          // },
           filter: {
             term: { 'entity_type.keyword': 'Sample' }
           }
@@ -77,7 +74,7 @@ async function getAllEntities(token) {
     ...await getSamples(token, 0, 10000),
     ...await getVanderbiltSamples(token, 'LK', 0, 10000),
     ...await getVanderbiltSamples(token, 'RK', 0, 5000),
-    ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
+    // ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
   ];
 }
 
@@ -117,7 +114,7 @@ function createEntityGraph(samples) {
     // Donor
     if (ancestor.entity_type === 'Donor' && !nodes[ancestor.uuid]) {
       nodes[ancestor.uuid] = {
-        data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: 'N/A', entity_type: ancestor.entity_type, entity: ancestor }
+        data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: 'N/A', entity_type: ancestor.entity_type, entity: ancestor, provider: sample.group_name }
       };
       edges.push({
         data: { id: ancestor.group_uuid+'-'+ancestor.uuid, source: ancestor.group_uuid, target: ancestor.uuid }
@@ -126,11 +123,11 @@ function createEntityGraph(samples) {
 
     // Samples
     nodes[sample.uuid] = {
-      data: { id: sample.uuid, label: sample.hubmap_id, status, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample }
+      data: { id: sample.uuid, label: sample.hubmap_id, status, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample, provider: sample.group_name }
     }
     if (ancestor.uuid) {
       if (!nodes[ancestor.uuid]) {
-        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: hasAncestorRuiLocation ? 'Registered Block' : 'Unknown', entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor } };
+        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: hasAncestorRuiLocation ? 'Registered Block' : 'Unknown', entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
       }
 
       edges.push({

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
+  "description": "Report for HuBMAP CCF Registrations",
+  "autosize": {"type": "fit", "resize": true},
+  "width": "container",
+  "height": "container",
+  "data": {
+    "name": "nodes"
+  },
+  "transform": [
+    { "filter": "isValid(datum.data.provider)" }
+  ],
+  "mark": "bar",
+  "encoding": {
+    "x": { "aggregate": "count", "field": "data.status", "title": "Sample Count" },
+    "y": { "field": "data.provider", "title": "Provider" },
+    "color": { "field": "data.status", "title": "RUI Registration Status" }
+  },
+  "datasets": {
+    "nodes": []
+  }
+}

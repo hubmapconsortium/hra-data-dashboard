@@ -1,7 +1,7 @@
-function buildCyGraph(elements) {
+function buildCyGraph(graph) {
   const cy = cytoscape({
     container: document.getElementById('cy'),
-    elements,
+    elements: graph,
     style: [ // the stylesheet for the graph
       {
         selector: 'node',
@@ -119,6 +119,14 @@ function buildCyGraph(elements) {
     ]
   });
 
+  cy.on('tap', 'node', function(evt){
+    const node = evt.target;
+    window.open(`https://portal.hubmapconsortium.org/browse/${node.data('label')}`, '_blank');
+  });
+
+  addProviderChooser(cy, graph);
+  doCircleLayout(cy, 'root');
+
   return cy;
 }
 
@@ -171,39 +179,8 @@ function doCircleLayout(cy, root) {
   // }).run();
 }
 
-function setApiKey() {
-  const apiKey = prompt('Enter API Key (leave blank to clear)', '');
-  localStorage.removeItem('HUBMAP_KEY');
-  if (apiKey.trim().length > 0) {
-    localStorage.setItem('HUBMAP_KEY', apiKey);
-  }
-  localStorage.removeItem('x');
-  location.reload();
-}
-
 async function main() {
-  const token = localStorage.getItem('HUBMAP_KEY') || undefined;
-  let samples = [];
-  if (sessionStorage.getItem('x')) {
-    samples = JSON.parse(sessionStorage.getItem('x'));
-  } else {
-    samples = await getAllEntities(token);  
-    try {
-      sessionStorage.setItem('x', JSON.stringify(samples));
-    } catch (e) {
-      console.log('Result set too large to cache.');
-    }
-  }
-  const graph = createEntityGraph(samples);
-  console.log(graph);
-  cy = buildCyGraph(graph);
-
-  cy.on('tap', 'node', function(evt){
-    const node = evt.target;
-    window.open(`https://portal.hubmapconsortium.org/browse/${node.data('label')}`, '_blank');
-  });
-
-  addProviderChooser(cy, graph);
-  doCircleLayout(cy, 'root');
+  const graph = await createCachedSampleGraph();
+  cy = buildCyGraph(graph); 
 }
-main();
+window.addEventListener('DOMContentLoaded', main);
