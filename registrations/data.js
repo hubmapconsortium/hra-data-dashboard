@@ -138,8 +138,11 @@ function createEntityGraph(samples) {
     }
     if (ancestor.uuid) {
       if (!nodes[ancestor.uuid]) {
+        const isAncestorSection = (ancestor.specimen_type || '').toLowerCase().indexOf('section') !== -1;
         if (hasAncestorRuiLocation) {
           ancestorStatus = 'Registered Block';
+        } else if (isAncestorSection) {
+          ancestorStatus = 'Unregistered Section';
         } else {
           ancestorStatus = 'Unregistered Block';
         }
