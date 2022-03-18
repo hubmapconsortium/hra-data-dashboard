@@ -84,21 +84,32 @@ function createEntityGraph(samples) {
       data: { id: 'root', label: '', status: 'N/A', entity_type: 'Empty' }
     }
   };
-  const edges = [];
+  const edges = {};
   for (const sample of samples) {
     const ancestor = (sample.immediate_ancestors || [{}])[0];
     const hasRuiLocation = !!sample.rui_location;
     const hasAncestorRuiLocation = !!ancestor.rui_location;
-    const status = hasRuiLocation ? 'Registered Block' : hasAncestorRuiLocation ? 'Registered Section' : (sample.mapped_specimen_type || '').toLowerCase().indexOf('section') !== -1 ? 'Unregistered Section' : 'Unregistered Block';
+    const isSection = (sample.mapped_specimen_type || '').toLowerCase().indexOf('section') !== -1;
+
+    let status;
+    if (hasRuiLocation) {
+      status = 'Registered Block';
+    } else if (hasAncestorRuiLocation) {
+      status = 'Registered Section';
+    } else if (isSection) {
+      status = 'Unregistered Section';
+    } else {
+      status = 'Unregistered Block';
+    }
     
     // Consortium
     if (!nodes[sample.mapped_consortium]) {
       nodes[sample.mapped_consortium] = {
         data: { id: sample.mapped_consortium, label: sample.mapped_consortium, status: 'N/A', entity_type: 'Consortium' }
       }
-      edges.push({
+      edges['root-'+sample.mapped_consortium] = {
         data: { id: 'root-'+sample.mapped_consortium, source: 'root', target: sample.mapped_consortium }
-      });
+      };
     }
 
     // Tissue Provider
@@ -106,9 +117,9 @@ function createEntityGraph(samples) {
       nodes[sample.group_uuid] = {
         data: { id: sample.group_uuid, label: sample.group_name, status: 'N/A', entity_type: 'TissueProvider' }
       };
-      edges.push({
+      edges[sample.mapped_consortium+'-'+sample.group_uuid] = {
         data: { id: sample.mapped_consortium+'-'+sample.group_uuid, source: sample.mapped_consortium, target: sample.group_uuid }
-      });
+      };
     }
 
     // Donor
@@ -116,9 +127,9 @@ function createEntityGraph(samples) {
       nodes[ancestor.uuid] = {
         data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: 'N/A', entity_type: ancestor.entity_type, entity: ancestor, provider: sample.group_name }
       };
-      edges.push({
+      edges[ancestor.group_uuid+'-'+ancestor.uuid] = {
         data: { id: ancestor.group_uuid+'-'+ancestor.uuid, source: ancestor.group_uuid, target: ancestor.uuid }
-      });
+      };
     }
 
     // Samples
@@ -127,34 +138,41 @@ function createEntityGraph(samples) {
     }
     if (ancestor.uuid) {
       if (!nodes[ancestor.uuid]) {
-        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: hasAncestorRuiLocation ? 'Registered Block' : 'Unknown', entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
+        if (hasAncestorRuiLocation) {
+          ancestorStatus = 'Registered Block';
+        } else {
+          ancestorStatus = 'Unregistered Block';
+        }
+        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: ancestorStatus, entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
       }
 
-      edges.push({
+      edges[ancestor.uuid+'-'+sample.uuid] = {
         data: { id: ancestor.uuid+'-'+sample.uuid, source: ancestor.uuid, target: sample.uuid }
-      });
+      };
     }
   }
 
   const nodesArray = Object.values(nodes);
   nodesArray.forEach(n => {
-    switch (n.data.status) {
-    case 'Registered Block':
-      n.data.status_color = '#1a9641';
-      break;
-    case 'Registered Section':
-      n.data.status_color = '#a6d96a';
-      break;
-    case 'Unknown':
-      n.data.status_color = '#000000';
-      break;
-    case 'Unregistered Block':
-      n.data.status_color = '#d7191c';
-      break;
-    case 'Unregistered Section':
-      n.data.status_color = '#fdae61';
-      break;
+    if (n.data.entity_type === 'Sample' && !(n.data.specimen_type === 'Organ piece' && n.data.status.indexOf('Unregistered') === 0)) {
+      switch (n.data.status) {
+      case 'Registered Block':
+        n.data.status_color = '#1a9641';
+        break;
+      case 'Registered Section':
+        n.data.status_color = '#a6d96a';
+        break;
+      case 'Unknown':
+        n.data.status_color = '#000000';
+        break;
+      case 'Unregistered Block':
+        n.data.status_color = '#d7191c';
+        break;
+      case 'Unregistered Section':
+        n.data.status_color = '#fdae61';
+        break;
+      }
     }
   });
-  return { nodes: nodesArray, edges };
+  return { nodes: nodesArray, edges: Object.values(edges) };
 }

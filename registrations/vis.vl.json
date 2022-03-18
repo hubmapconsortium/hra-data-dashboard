@@ -19,8 +19,8 @@
         "x": { "aggregate": "count", "field": "status", "title": null },
         "y": { "field": "provider", "title": null },
         "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status", "scale": {
-          "domain": ["Registered Block", "Registered Section", "Unknown", "Unregistered Block", "Unregistered Section"],
-          "range": ["#1a9641", "#a6d96a", "#000000", "#d7191c", "#fdae61"]
+          "domain": ["Registered Block", "Registered Section", "Unregistered Block", "Unregistered Section"],
+          "range": ["#1a9641", "#a6d96a", "#d7191c", "#fdae61"]
         } },
         "tooltip": [
           { "field": "provider", "title": "Tissue Provider" },
