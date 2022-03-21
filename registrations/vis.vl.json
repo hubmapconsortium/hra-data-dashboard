@@ -14,7 +14,7 @@
       "height": {"step": 40},
       "width": 480,      
       "mark": "bar",
-      "transform": [ {"filter": "datum.provider != 'Vanderbilt TMC'"} ],
+      "transform": [ {"filter": "datum.provider != 'Vanderbilt TMC' && datum.provider != 'All Tissue Providers'"} ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": null },
         "y": { "field": "provider", "title": null },
@@ -34,6 +34,22 @@
       "width": 480,      
       "mark": "bar",
       "transform": [ {"filter": "datum.provider == 'Vanderbilt TMC'"} ],
+      "encoding": {
+        "x": { "aggregate": "count", "field": "status", "title": null },
+        "y": { "field": "provider", "title": null },
+        "color": { "field": "status", "type": "nominal", "title": "RUI Registration Status" },
+        "tooltip": [
+          { "field": "provider", "title": "Tissue Provider" },
+          { "field": "status", "title": "Status" },
+          { "aggregate": "count", "field": "status", "title": "Sample Count" }
+        ]
+      }
+    },
+    {
+      "height": {"step": 40},
+      "width": 480,      
+      "mark": "bar",
+      "transform": [ {"filter": "datum.provider == 'All Tissue Providers'"} ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": "Sample Count" },
         "y": { "field": "provider", "title": null },
