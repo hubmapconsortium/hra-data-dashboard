@@ -6,24 +6,19 @@
     "name": "nodes"
   },
   "transform": [
-    { "filter": "isValid(datum.provider) && isValid(datum.status_color)" },
-    { "filter": { "param": "published_selection" } }
+    { "filter": "isValid(datum.provider) && isValid(datum.status_color)" }
   ],
   "vconcat": [
     {
       "mark": { "type": "text" },
-      "data": { "values": [] },
       "params": [
         {
           "name": "published_selection",
           "select": {
-            "type": "point"
+            "type": "point",
+            "fields": [ "published_status" ]
           },
-          "bind": "legend",
-          "value": [
-            { "published_status": "Published" },
-            { "published_status": "Unpublished" }
-          ]
+          "bind": "legend"
         }
       ],
       "encoding": {
@@ -33,10 +28,6 @@
           "type": "ordinal",
           "legend": {
             "orient": "right",
-            "values": [
-              "Published",
-              "Unpublished"
-            ],
             "symbolSize": 0
           }
         }
@@ -45,9 +36,12 @@
     {
       "title": "Sample Registrations (Raw Counts)",
       "height": {"step": 40},
-      "width": 480,      
+      "width": 480,
       "mark": "bar",
-      "transform": [ {"filter": "datum.provider != 'Vanderbilt TMC' && datum.provider != 'All Tissue Providers'"} ],
+      "transform": [
+        {"filter": "datum.provider != 'Vanderbilt TMC' && datum.provider != 'All Tissue Providers'"},
+        { "filter": { "param": "published_selection" } }
+      ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": null },
         "y": { "field": "provider", "title": null },
@@ -66,7 +60,10 @@
       "height": {"step": 40},
       "width": 480,      
       "mark": "bar",
-      "transform": [ {"filter": "datum.provider == 'Vanderbilt TMC'"} ],
+      "transform": [
+        {"filter": "datum.provider == 'Vanderbilt TMC'"},
+        { "filter": { "param": "published_selection" } }
+      ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": null },
         "y": { "field": "provider", "title": null },
@@ -82,7 +79,10 @@
       "height": {"step": 40},
       "width": 480,      
       "mark": "bar",
-      "transform": [ {"filter": "datum.provider == 'All Tissue Providers'"} ],
+      "transform": [
+        {"filter": "datum.provider == 'All Tissue Providers'"},
+        { "filter": { "param": "published_selection" } }
+      ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": "Sample Count" },
         "y": { "field": "provider", "title": null },
@@ -99,6 +99,9 @@
       "height": {"step": 40},
       "width": 480,      
       "mark": "bar",
+      "transform": [
+        { "filter": { "param": "published_selection" } }
+      ],
       "encoding": {
         "x": { "aggregate": "count", "field": "status", "title": "Sample Count", "stack": "normalize" },
         "y": { "field": "provider", "title": null },
