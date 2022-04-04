@@ -23,7 +23,7 @@ function getSamples(token, from, size) {
       },
       _source: {
         includes: [
-          'data_access_level', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -60,7 +60,7 @@ function getVanderbiltSamples(token, organ, from, size) {
       },
       _source: {
         includes: [
-          'data_access_level', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -134,7 +134,7 @@ function createEntityGraph(samples) {
 
     // Sample
     nodes[sample.uuid] = {
-      data: { id: sample.uuid, label: sample.hubmap_id, status, published: sample.data_access_level, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample, provider: sample.group_name }
+      data: { id: sample.uuid, label: sample.hubmap_id, creator: sample.created_by_user_email, status, published: sample.data_access_level, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample, provider: sample.group_name }
     }
 
     // Parent Sample
@@ -148,7 +148,7 @@ function createEntityGraph(samples) {
         } else {
           ancestorStatus = 'Unregistered Block';
         }
-        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, published: ancestor.data_access_level, status: ancestorStatus, entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
+        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, creator: ancestor.created_by_user_email, published: ancestor.data_access_level, status: ancestorStatus, entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
       }
 
       edges[ancestor.uuid+'-'+sample.uuid] = {
