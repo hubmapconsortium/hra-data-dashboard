@@ -163,7 +163,6 @@ function doCircleLayout(cy, root) {
 
 async function main() {
   const graph = await createCachedSampleGraph();
-  console.log(graph);
   cy = buildCyGraph(graph); 
 }
 window.addEventListener('DOMContentLoaded', main);
