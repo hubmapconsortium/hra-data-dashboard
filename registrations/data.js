@@ -163,6 +163,7 @@ function createEntityGraph(samples) {
         !(n.data.specimen_type === 'Organ piece' && n.data.status.indexOf('Unregistered') === 0) &&
         !(n.data.specimen_type === 'Organ' && n.data.status.indexOf('Unregistered') === 0)
       ) {
+      n.data.published_status = n.data.published === 'public' ? 'Published' : 'Unpublished';
       switch (n.data.status) {
       case 'Registered Block':
         n.data.status_color = '#1a9641';

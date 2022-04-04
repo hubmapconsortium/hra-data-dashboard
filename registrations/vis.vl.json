@@ -6,9 +6,42 @@
     "name": "nodes"
   },
   "transform": [
-    { "filter": "isValid(datum.provider) && isValid(datum.status_color)" }
+    { "filter": "isValid(datum.provider) && isValid(datum.status_color)" },
+    { "filter": { "param": "published_selection" } }
   ],
   "vconcat": [
+    {
+      "mark": { "type": "text" },
+      "data": { "values": [] },
+      "params": [
+        {
+          "name": "published_selection",
+          "select": {
+            "type": "point"
+          },
+          "bind": "legend",
+          "value": [
+            { "published_status": "Published" },
+            { "published_status": "Unpublished" }
+          ]
+        }
+      ],
+      "encoding": {
+        "opacity": {
+          "field": "published_status",
+          "title": "Publication Status",
+          "type": "ordinal",
+          "legend": {
+            "orient": "right",
+            "values": [
+              "Published",
+              "Unpublished"
+            ],
+            "symbolSize": 0
+          }
+        }
+      }
+    },
     {
       "title": "Sample Registrations (Raw Counts)",
       "height": {"step": 40},
