@@ -16,6 +16,7 @@ async function buildVega(graph) {
     data: spec.datasets.nodes.map(n => (
       {
         'HuBMAP ID': n.label,
+        'Submission ID': n.submission_id,
         'Creator': n.creator,
         'Provider': n.provider,
         'Publication Status': n.published_status,

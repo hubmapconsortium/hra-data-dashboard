@@ -23,7 +23,7 @@ function getSamples(token, from, size) {
       },
       _source: {
         includes: [
-          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'submission_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -60,7 +60,7 @@ function getVanderbiltSamples(token, organ, from, size) {
       },
       _source: {
         includes: [
-          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'created_by_user_email', 'uuid', 'hubmap_id', 'submission_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -164,6 +164,7 @@ function createEntityGraph(samples) {
         !(n.data.specimen_type === 'Organ' && n.data.status.indexOf('Unregistered') === 0)
       ) {
       n.data.published_status = n.data.published === 'public' ? 'Published' : 'Unpublished';
+      n.data.submission_id = n.data.entity.submission_id;
       switch (n.data.status) {
       case 'Registered Block':
         n.data.status_color = '#1a9641';
