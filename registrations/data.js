@@ -23,7 +23,7 @@ function getSamples(token, from, size) {
       },
       _source: {
         includes: [
-          'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -60,7 +60,7 @@ function getVanderbiltSamples(token, organ, from, size) {
       },
       _source: {
         includes: [
-          'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
+          'data_access_level', 'uuid', 'hubmap_id', 'entity_type', 'mapped_organ', 'mapped_specimen_type', 'immediate_ancestors', 'rui_location', 'group_uuid', 'group_name', 'mapped_consortium'
         ]
       }
     })
@@ -105,7 +105,7 @@ function createEntityGraph(samples) {
     // Consortium
     if (!nodes[sample.mapped_consortium]) {
       nodes[sample.mapped_consortium] = {
-        data: { id: sample.mapped_consortium, label: sample.mapped_consortium, status: 'N/A', entity_type: 'Consortium' }
+        data: { id: sample.mapped_consortium, label: sample.mapped_consortium, published: 'public', status: 'N/A', entity_type: 'Consortium' }
       }
       edges['root-'+sample.mapped_consortium] = {
         data: { id: 'root-'+sample.mapped_consortium, source: 'root', target: sample.mapped_consortium }
@@ -115,7 +115,7 @@ function createEntityGraph(samples) {
     // Tissue Provider
     if (!nodes[sample.group_uuid]) {
       nodes[sample.group_uuid] = {
-        data: { id: sample.group_uuid, label: sample.group_name, status: 'N/A', entity_type: 'TissueProvider' }
+        data: { id: sample.group_uuid, label: sample.group_name, published: 'public', status: 'N/A', entity_type: 'TissueProvider' }
       };
       edges[sample.mapped_consortium+'-'+sample.group_uuid] = {
         data: { id: sample.mapped_consortium+'-'+sample.group_uuid, source: sample.mapped_consortium, target: sample.group_uuid }
@@ -125,17 +125,19 @@ function createEntityGraph(samples) {
     // Donor
     if (ancestor.entity_type === 'Donor' && !nodes[ancestor.uuid]) {
       nodes[ancestor.uuid] = {
-        data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: 'N/A', entity_type: ancestor.entity_type, entity: ancestor, provider: sample.group_name }
+        data: { id: ancestor.uuid, label: ancestor.hubmap_id, published: ancestor.data_access_level, status: 'N/A', entity_type: ancestor.entity_type, entity: ancestor, provider: sample.group_name }
       };
       edges[ancestor.group_uuid+'-'+ancestor.uuid] = {
         data: { id: ancestor.group_uuid+'-'+ancestor.uuid, source: ancestor.group_uuid, target: ancestor.uuid }
       };
     }
 
-    // Samples
+    // Sample
     nodes[sample.uuid] = {
-      data: { id: sample.uuid, label: sample.hubmap_id, status, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample, provider: sample.group_name }
+      data: { id: sample.uuid, label: sample.hubmap_id, status, published: sample.data_access_level, entity_type: sample.entity_type, specimen_type: sample.mapped_specimen_type, organ: sample.mapped_organ, entity: sample, provider: sample.group_name }
     }
+
+    // Parent Sample
     if (ancestor.uuid) {
       if (!nodes[ancestor.uuid]) {
         const isAncestorSection = (ancestor.specimen_type || '').toLowerCase().indexOf('section') !== -1;
@@ -146,7 +148,7 @@ function createEntityGraph(samples) {
         } else {
           ancestorStatus = 'Unregistered Block';
         }
-        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, status: ancestorStatus, entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
+        nodes[ancestor.uuid] = { data: { id: ancestor.uuid, label: ancestor.hubmap_id, published: ancestor.data_access_level, status: ancestorStatus, entity_type: ancestor.entity_type, specimen_type: ancestor.specimen_type, entity: ancestor, provider: sample.group_name } };
       }
 
       edges[ancestor.uuid+'-'+sample.uuid] = {
@@ -157,7 +159,10 @@ function createEntityGraph(samples) {
 
   const nodesArray = Object.values(nodes);
   nodesArray.forEach(n => {
-    if (n.data.entity_type === 'Sample' && !(n.data.specimen_type === 'Organ piece' && n.data.status.indexOf('Unregistered') === 0)) {
+    if (n.data.entity_type === 'Sample' && 
+        !(n.data.specimen_type === 'Organ piece' && n.data.status.indexOf('Unregistered') === 0) &&
+        !(n.data.specimen_type === 'Organ' && n.data.status.indexOf('Unregistered') === 0)
+      ) {
       switch (n.data.status) {
       case 'Registered Block':
         n.data.status_color = '#1a9641';

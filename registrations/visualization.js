@@ -15,7 +15,13 @@ function buildCyGraph(graph) {
           'shape': 'ellipse'
         }
       },
-
+      {
+        selector: `node[published = 'public']`,
+        style: {
+          'border-color': '#000000',
+          'border-width': 3
+        }
+      },
       {
         selector: `node[entity_type = 'Empty']`,
         style: {
@@ -157,6 +163,7 @@ function doCircleLayout(cy, root) {
 
 async function main() {
   const graph = await createCachedSampleGraph();
+  console.log(graph);
   cy = buildCyGraph(graph); 
 }
 window.addEventListener('DOMContentLoaded', main);
