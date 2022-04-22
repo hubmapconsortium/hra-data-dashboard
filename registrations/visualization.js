@@ -103,7 +103,18 @@ function buildCyGraph(graph) {
 
   cy.on('tap', 'node', function(evt){
     const node = evt.target;
-    window.open(`https://portal.hubmapconsortium.org/browse/${node.data('label')}`, '_blank');
+    const escapedLabel = encodeURIComponent(node.data('label'));
+    switch (node.data('entity_type')) {
+      case 'Consortium':
+        window.open(node.data('label') === 'Human Cell Atlas' ? 'https://data.humancellatlas.org/' : 'https://portal.hubmapconsortium.org/', '_blank');
+        break;
+      case 'TissueProvider':
+        window.open(`https://portal.hubmapconsortium.org/search?entity_type[0]=Sample&group_name[0]=${escapedLabel}`, '_blank');
+        break;
+      default:
+        window.open(`https://portal.hubmapconsortium.org/browse/${escapedLabel}`, '_blank');
+        break;
+    }
   });
 
   addProviderChooser(cy, graph);
