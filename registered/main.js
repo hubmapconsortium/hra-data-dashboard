@@ -74,7 +74,7 @@ function resultsAsDatasets(results) {
       y_dimension: row.rui_location.y_dimension,
       z_dimension: row.rui_location.z_dimension,
       ref_organ: '#' + row.rui_location.placement.target.split('#')[1].replace(/\_Patch|CC1|CC2|CC3/g, '').replace(/V1\.1/, ''),
-      organ: row.rui_location.placement.target.split('#')[1].slice(3).replace(/\_Patch|CC1|CC2|CC3|Left|Right/g, '').replace('Colon', 'Lg Intestine').replace(/V1\.1/, ''),
+      organ: row.rui_location.placement.target.split('#')[1].slice(3).replace(/\_Patch|CC1|CC2|CC3|Left|Right/g, '').replace('Colon', 'LargeIntestine').replace(/V1\.1/, ''),
       num_as: (row.rui_location.ccf_annotations || []).length,
       datasets: row.datasets.map(d => d.link).join('; '),
       dataset_count: row.datasets.length,
