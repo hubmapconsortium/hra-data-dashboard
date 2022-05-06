@@ -69,13 +69,100 @@ function getVanderbiltSamples(token, organ, from, size) {
   .then(r => r.hits.hits.map(n => Object.assign(n._source)));
 }
 
+function getSampleDonors(token, from, size) {
+  return fetch('https://search.api.hubmapconsortium.org/portal/search', {
+    method: 'POST',
+    headers: token ?
+      { 'Content-type': 'application/json', 'Authorization': `Bearer ${token}` } : 
+      { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      version: true,
+      from,
+      size,
+      stored_fields: ['*'],
+      script_fields: {},
+      docvalue_fields: [],
+      query: {
+        bool: {
+          must_not: {
+            term: { 'group_name.keyword': 'Vanderbilt TMC' }
+          },
+          filter: {
+            term: { 'entity_type.keyword': 'Sample' }
+          }
+        }
+      },
+      _source: {
+        includes: [
+          'donor.hubmap_id', 'donor.submission_id', 'uuid'
+        ]
+      }
+    })
+  }).then(r => r.json())
+  .then(r => { console.log(r.hits.total.value, r.hits.hits.map(n => n._source)); return r })
+  .then(r => r.hits.hits.map(n => Object.assign(n._source)));
+}
+
+function getVanderbiltSampleDonors(token, organ, from, size) {
+  return fetch('https://search.api.hubmapconsortium.org/portal/search', {
+    method: 'POST',
+    headers: token ?
+      { 'Content-type': 'application/json', 'Authorization': `Bearer ${token}` } : 
+      { 'Content-type': 'application/json' },
+    body: JSON.stringify({
+      version: true,
+      from,
+      size,
+      stored_fields: ['*'],
+      script_fields: {},
+      docvalue_fields: [],
+      query: {
+        bool: {
+          must: {
+            term: { 'group_name.keyword': 'Vanderbilt TMC' }
+          },
+          must_not: {
+            term: { 'origin_sample.organ.keyword': organ }
+          },
+          filter: {
+            term: { 'entity_type.keyword': 'Sample' }
+          }
+        }
+      },
+      _source: {
+        includes: [
+          'donor.hubmap_id', 'donor.submission_id', 'uuid'
+        ]
+      }
+    })
+  }).then(r => r.json())
+  .then(r => { console.log(r.hits.total.value, r.hits.hits.map(n => n._source)); return r })
+  .then(r => r.hits.hits.map(n => Object.assign(n._source)));
+}
+
+async function getDonorLookup(token) {
+  return [
+    ...await getSampleDonors(token, 0, 10000),
+    ...await getVanderbiltSampleDonors(token, 'LK', 0, 10000),
+    ...await getVanderbiltSampleDonors(token, 'RK', 0, 5000),
+    // ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
+  ].reduce((acc, sample) => {
+    acc[sample.uuid] = sample.donor;
+    return acc;
+  }, {});
+}
+
 async function getAllEntities(token) {
+  const donors = await getDonorLookup(token);
   return [
     ...await getSamples(token, 0, 10000),
     ...await getVanderbiltSamples(token, 'LK', 0, 10000),
     ...await getVanderbiltSamples(token, 'RK', 0, 5000),
     // ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
-  ];
+  ].map((sample) => {
+    sample.donor = donors[sample.uuid];
+    return sample;
+  });
 }
 
 function createEntityGraph(samples) {
@@ -165,6 +252,10 @@ function createEntityGraph(samples) {
       ) {
       n.data.published_status = n.data.published === 'public' ? 'Published' : 'Unpublished';
       n.data.submission_id = n.data.entity.submission_id;
+      if (n.data.entity.donor) {
+        n.data.donor_hubmap_id = n.data.entity.donor.hubmap_id;
+        n.data.donor_submission_id = n.data.entity.donor.submission_id;
+      }
       switch (n.data.status) {
       case 'Registered Block':
         n.data.status_color = '#1a9641';
