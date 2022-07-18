@@ -144,6 +144,7 @@ async function getDonorLookup(token) {
   return [
     ...await getSampleDonors(token, 0, 10000),
     ...await getVanderbiltSampleDonors(token, 'LK', 0, 10000),
+    ...await getVanderbiltSampleDonors(token, 'LK', 5000, 5000),
     ...await getVanderbiltSampleDonors(token, 'RK', 0, 5000),
     // ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
   ].reduce((acc, sample) => {
@@ -156,9 +157,12 @@ async function getAllEntities(token) {
   const donors = await getDonorLookup(token);
   return [
     ...await getSamples(token, 0, 10000),
-    ...await getVanderbiltSamples(token, 'LK', 0, 10000),
-    ...await getVanderbiltSamples(token, 'RK', 0, 5000),
-    // ...await getVanderbiltSamples(token, 'RK', 5000, 5000)
+    ...await getVanderbiltSamples(token, 'LK', 0, 3000),
+    ...await getVanderbiltSamples(token, 'LK', 3000, 3000),
+    ...await getVanderbiltSamples(token, 'LK', 6000, 4000),
+    ...await getVanderbiltSamples(token, 'RK', 0, 3000),
+    ...await getVanderbiltSamples(token, 'RK', 3000, 3000),
+    ...await getVanderbiltSamples(token, 'RK', 6000, 4000),
   ].map((sample) => {
     sample.donor = donors[sample.uuid];
     return sample;
