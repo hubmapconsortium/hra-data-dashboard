@@ -16,7 +16,7 @@ async function createCachedSampleGraph() {
   if (storedSample) {
     samples = JSON.parse(storedSample);
   } else {
-    samples = await getAllEntities(token);  
+    samples = await getAllEntities(token);
     try {
       await idbKeyval.set('x', JSON.stringify(samples));
       sessionStorage.setItem('INITIALIZED', 'true');
