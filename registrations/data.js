@@ -31,7 +31,6 @@ function getSamples(token, from, size) {
           'entity_type',
           'mapped_organ',
           'mapped_sample_category',
-          'specimen_type',
           'immediate_ancestors',
           'rui_location',
           'group_uuid',
@@ -88,7 +87,6 @@ function getVanderbiltSamples(token, organ, from, size) {
           'entity_type',
           'mapped_organ',
           'mapped_sample_category',
-          'specimen_type',
           'immediate_ancestors',
           'rui_location',
           'group_uuid',
@@ -317,7 +315,6 @@ function createEntityGraph(samples) {
         published: sample.data_access_level,
         entity_type: sample.entity_type,
         sample_category: sample.mapped_sample_category,
-        specimen_type: sample.specimen_type,
         organ: sample.mapped_organ,
         entity: sample,
         provider: sample.group_name,
@@ -344,7 +341,6 @@ function createEntityGraph(samples) {
             status: ancestorStatus,
             entity_type: ancestor.entity_type,
             sample_category: ancestor.mapped_sample_category,
-            specimen_type: ancestor.specimen_type,
             entity: ancestor,
             provider: sample.group_name,
           },
@@ -365,10 +361,6 @@ function createEntityGraph(samples) {
   nodesArray.forEach((n) => {
     if (
       n.data.entity_type === 'Sample' &&
-      !(
-        n.data.specimen_type === 'organ_piece' &&
-        n.data.status.indexOf('Unregistered') === 0
-      ) &&
       !(
         n.data.sample_category === 'Organ' &&
         n.data.status.indexOf('Unregistered') === 0
