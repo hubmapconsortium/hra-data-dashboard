@@ -70,7 +70,7 @@ function getVanderbiltSamples(token, organ, from, size) {
             term: { 'group_name.keyword': 'Vanderbilt TMC' },
           },
           must_not: {
-            term: { 'origin_sample.organ.keyword': organ },
+            term: { 'origin_samples.organ.keyword': organ },
           },
           filter: {
             term: { 'entity_type.keyword': 'Sample' },
@@ -165,7 +165,7 @@ function getVanderbiltSampleDonors(token, organ, from, size) {
             term: { 'group_name.keyword': 'Vanderbilt TMC' },
           },
           must_not: {
-            term: { 'origin_sample.organ.keyword': organ },
+            term: { 'origin_samples.organ.keyword': organ },
           },
           filter: {
             term: { 'entity_type.keyword': 'Sample' },
