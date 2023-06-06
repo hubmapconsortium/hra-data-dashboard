@@ -64,15 +64,6 @@ function buildCyGraph(graph) {
         },
       },
       {
-        selector: `node[specimen_type = 'organ_piece']`,
-        style: {
-          'background-color': '#0571b0',
-          shape: 'octagon',
-          width: 70,
-          height: 70,
-        },
-      },
-      {
         selector: `node[status_color]`,
         style: {
           'background-color': 'data(status_color)',
