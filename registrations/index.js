@@ -21,7 +21,6 @@ async function buildVega(graph) {
         'Provider': n.provider,
         'Publication Status': n.published_status,
         'RUI Registration Status': n.status,
-        'Specimen Type': n.specimen_type,
         'Donor HuBMAP ID': n.donor_hubmap_id,
         'Donor Submision ID': n.donor_submission_id
       }
