@@ -1,5 +1,23 @@
+async function doSearchRequest(url, init) {
+  try {
+    const res = await fetch(url, init);
+    const text = await res.text();
+    const validResponse = res.ok || text.startsWith('https');
+    if (validResponse) {
+      if (text.startsWith('https')) {
+        return await fetch(text).then((r) => r.json());
+      } else {
+        return JSON.parse(text);
+      }
+    }
+    return undefined;
+  } catch (_error) {
+    return undefined;
+  }
+}
+
 function getSamples(token, from, size) {
-  return fetch('https://search.api.hubmapconsortium.org/v3/portal/search', {
+  return doSearchRequest('https://search.api.hubmapconsortium.org/v3/portal/search', {
     method: 'POST',
     headers: token
       ? { 'Content-type': 'application/json', Authorization: `Bearer ${token}` }
@@ -40,7 +58,6 @@ function getSamples(token, from, size) {
       },
     }),
   })
-    .then((r) => r.json())
     .then((r) => {
       console.log(
         r.hits.total.value,
@@ -52,7 +69,7 @@ function getSamples(token, from, size) {
 }
 
 function getVanderbiltSamples(token, organ, from, size) {
-  return fetch('https://search.api.hubmapconsortium.org/v3/portal/search', {
+  return doSearchRequest('https://search.api.hubmapconsortium.org/v3/portal/search', {
     method: 'POST',
     headers: token
       ? { 'Content-type': 'application/json', Authorization: `Bearer ${token}` }
@@ -96,7 +113,6 @@ function getVanderbiltSamples(token, organ, from, size) {
       },
     }),
   })
-    .then((r) => r.json())
     .then((r) => {
       console.log(
         r.hits.total.value,
@@ -108,7 +124,7 @@ function getVanderbiltSamples(token, organ, from, size) {
 }
 
 function getSampleDonors(token, from, size) {
-  return fetch('https://search.api.hubmapconsortium.org/v3/portal/search', {
+  return doSearchRequest('https://search.api.hubmapconsortium.org/v3/portal/search', {
     method: 'POST',
     headers: token
       ? { 'Content-type': 'application/json', Authorization: `Bearer ${token}` }
@@ -135,7 +151,6 @@ function getSampleDonors(token, from, size) {
       },
     }),
   })
-    .then((r) => r.json())
     .then((r) => {
       console.log(
         r.hits.total.value,
@@ -147,7 +162,7 @@ function getSampleDonors(token, from, size) {
 }
 
 function getVanderbiltSampleDonors(token, organ, from, size) {
-  return fetch('https://search.api.hubmapconsortium.org/v3/portal/search', {
+  return doSearchRequest('https://search.api.hubmapconsortium.org/v3/portal/search', {
     method: 'POST',
     headers: token
       ? { 'Content-type': 'application/json', Authorization: `Bearer ${token}` }
@@ -177,7 +192,6 @@ function getVanderbiltSampleDonors(token, organ, from, size) {
       },
     }),
   })
-    .then((r) => r.json())
     .then((r) => {
       console.log(
         r.hits.total.value,
